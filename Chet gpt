@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simple ChatGPT Clone</title>
+</head>
+<body>
+<h2>ChatGPT Clone</h2>
+<textarea id="chatbox" rows="20" cols="70" readonly></textarea><br/>
+<input type="text" id="userInput" placeholder="Apna message yahan likho..." />
+<button onclick="sendMessage()">Bhejo</button>
+
+<script>
+const apiKey = 'YAHAN_Apni_API_KEY_DALEN'; // ⚠️ केवल टेस्टिंग के लिए
+
+async function sendMessage() {
+    const inputBox = document.getElementById('userInput');
+    const chatbox = document.getElementById('chatbox');
+    const userText = inputBox.value.trim();
+    if (!userText) return;
+
+    chatbox.value += "Aap: " + userText + "\n";
+    inputBox.value = '';
+
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + apiKey,
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: [{role: 'user', content: userText}]
+            }),
+        });
+        const data = await response.json();
+        const reply = data.choices[0].message.content;
+        chatbox.value += "Bot: " + reply + "\n";
+    } catch (error) {
+        chatbox.value += "❌ Error: " + error.message + "\n";
+    }
+}
+</script>
+</body>
+</html>
